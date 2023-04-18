@@ -16,7 +16,7 @@
   ```
   $ migrate create -ext sql -dir db/migration -seq init_schema
   ```
-  - 000001_init_schema.down.sql, 000001_init_schema.up.sql 자동생성
+  - `000001_init_schema.down.sql`, `000001_init_schema.up.sql` 자동생성
 
 - 각각 파일 채우고, Makefile 작성
   ```Makefile
