@@ -57,3 +57,80 @@
     ```
   
 </details>
+
+<details>
+  <summary>Generate CRUD Golang code from SQL with sqlc</summary>
+  
+  - sqlc 설치
+  	```bash
+	$ brew install sqlc
+	```
+  - sqlc 실행
+	```bash
+	$ sqlc init
+	```
+
+  - sqlc.yaml
+  
+	```yaml
+	version: "2"
+	sql:
+	- schema: "./db/migration/"
+	  queries: "./db/query/"
+	  engine: "postgresql"
+	  gen:
+	    go: 
+	      package: "db"
+	      out: "./db/sqlc"
+	      emit_json_tags: true
+	      emit_prepared_queries: false
+	      emit_interface: true
+	      emit_exact_table_names: false
+	      emit_empty_slices: true
+	```
+  
+  - 위에 지정한 패키지 생성
+  - query 안에 account.sql 작성
+  
+  	```sql
+	-- name: CreateAccount :one
+	INSERT INTO accounts (
+	  owner,
+	  balance,
+	  currency
+	) VALUES (
+	  $1, $2, $3
+	) RETURNING *;
+
+	-- name: GetAccount :one
+	SELECT * FROM accounts 
+	WHERE id = $1 LIMIT 1;
+
+	-- name: ListAccounts :many
+	SELECT * FROM accounts
+	ORDER BY id
+	LIMIT $1 
+	OFFSET $2;
+
+	-- name: UpdateAccount :exec
+	UPDATE accounts 
+	SET balance = $2
+	WHERE id = $1
+	RETURNING *;
+
+	-- name: DeleteAccount :exec
+	DELETE FROM accounts 
+	WHERE id = $1;
+	```
+	
+  - query 실행(-> Makefile에 추가)
+  	```bash
+	$ sqlc generate
+	```
+  
+  - go 패키지 설치
+  	```bash
+	$ go mod init
+	$ go mod tidy
+	```
+</details>
